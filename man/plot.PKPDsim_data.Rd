@@ -4,13 +4,19 @@
 \alias{plot.PKPDsim_data}
 \title{Generic plotting function for PKPDsim objects}
 \usage{
-\method{plot}{PKPDsim_data}(data, only_obs = TRUE, labels = list(x =
-  "Time (hours)", y = "Concentration"), ...)
+\method{plot}{PKPDsim_data}(data, only_obs = TRUE, show = list(obs = FALSE,
+  spaghetti = TRUE, ci = FALSE, median = TRUE), target = NULL,
+  target_as_ribbon = TRUE, labels = list(x = "Time (hours)", y =
+  "Concentration"), ...)
 }
 \arguments{
 \item{data}{PKPDsim-simulated data}
 
 \item{only_obs}{Only plot observation compartment}
+
+\item{target}{vector of target values (dependent variable), will be shown as vertical lines}
+
+\item{target_as_ribbon}{show target (only when vector of 2) as ribbon (TRUE), or just as two lines (FALSE)}
 
 \item{labels}{list with `x` and `y` labels}
 

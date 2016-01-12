@@ -3,7 +3,8 @@
 #' @param data PKPDsim-simulated data
 #' @param only_obs Only plot observation compartment
 #' @param labels list with `x` and `y` labels
-#' @param target vector of target (dependent variable)
+#' @param target vector of target values (dependent variable), will be shown as vertical lines
+#' @param target_as_ribbon show target (only when vector of 2) as ribbon (TRUE), or just as two lines (FALSE)
 #' @param ... rest
 #' @export
 plot.PKPDsim_data <- function(

@@ -1,0 +1,6 @@
+language: R
+sudo: required
+warnings_are_errors: false
+
+r_binary_packages:
+ - testit
