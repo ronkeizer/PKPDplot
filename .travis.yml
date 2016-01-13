@@ -5,5 +5,5 @@ warnings_are_errors: false
 r_binary_packages:
  - testit
 r_github_packages:
-  - ronkeizer/PKPDsim
+ - ronkeizer/PKPDsim
   
