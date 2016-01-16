@@ -8,5 +8,6 @@ Maintainer: Ron Keizer <ronkeizer@gmail.com>
 Description: Plot PKPDsim data
 Depends: ggplot2, dplyr, grid
 Imports: PKPDsim
+Suggests: testit
 License: MIT
 LazyData: TRUE

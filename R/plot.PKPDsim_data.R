@@ -8,6 +8,7 @@
 #' @param show_single definition for plots of single patients
 #' @param show_population definition for plots of populations
 #' @param show definition of what to show in plot, overrides `show_single` and `show_population`. NULL by default
+#' @param return_svg return the svg plot definition instead of ggplot2 object. FALSE by default
 #' @param ... rest
 #' @export
 plot.PKPDsim_data <- function(
@@ -31,6 +32,7 @@ plot.PKPDsim_data <- function(
   target = NULL,
   target_as_ribbon = TRUE,
   labels = list(x = "Time (hours)", y = "Concentration (mg/L)"),
+  return_svg = FALSE,
   ...) {
     single <- TRUE
     if(length(unique(data$id)) > 1) {
@@ -101,5 +103,13 @@ plot.PKPDsim_data <- function(
     pl <- pl + ylab(labels$y)
   }
   pl <- pl + theme_plain()
-  return(pl)
+  if(return_svg) {
+    filename <- paste0(tempfile(pattern="plot_"), ".svg")
+    ggsave(filename = filename, plot = pl, width=9, height=6)
+    pl_contents <- readChar(filename, file.info(filename)$size)
+    unlink(filename)
+    return(pl_contents)
+  } else {
+    return(pl)
+  }
 }

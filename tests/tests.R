@@ -14,7 +14,16 @@ dat <- sim_ode (ode = "pk1",
                 omega = c(0.1, 0.05, 0.1),
                 regimen = r1)
 
+## population plot
 plot(dat)
+
+# show target
 plot(dat,
      target = c(5, 11))
+
+# single patient
 plot(dat[dat$id == 1,])
+
+## save as SVG or PNG, return text instead
+text <- plot(dat[dat$id == 1,], return_svg = TRUE)
+
