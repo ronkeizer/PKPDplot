@@ -4,9 +4,11 @@ library(PKPDsim)
 library(PKPDplot)
 
 p <- list(CL = 1, V  = 10, KA = 0.5)
-pk1 <- new_ode_model("pk_1cmt_oral")
+pk1 <- new_ode_model("pk_1cmt_iv")
 r1 <- new_regimen(amt = 100,
-                  times = c(0, 12, 24, 36), t_inf = 2)
+                  times = c(0, 12, 24, 36),
+                  type = "infusion",
+                  t_inf = 2)
 dat <- sim_ode (ode = "pk1",
                 par = p,
                 n = 50,
@@ -23,6 +25,8 @@ plot(dat,
 
 # single patient
 plot(dat[dat$id == 1,])
+plot(dat[dat$id == 1,], target = c(5, 7))
+plot(dat[dat$id == 1,], target = c(5, 7), log_y = TRUE)
 
 ## save as SVG or PNG, return text instead
 text <- plot(dat[dat$id == 1,], return_svg = TRUE)

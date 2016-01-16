@@ -29,6 +29,7 @@ plot.PKPDsim_data <- function(
     regimen = TRUE
   ),
   show = NULL,
+  log_y = FALSE,
   target = NULL,
   target_as_ribbon = TRUE,
   labels = list(x = "Time (hours)", y = "Concentration (mg/L)"),
@@ -56,10 +57,31 @@ plot.PKPDsim_data <- function(
     dat_reg <- data.frame(cbind(t_start = regimen$dose_times,
                                 t_end = regimen$dose_times + regimen$t_inf,
                                 dose = regimen$dose_amts))
-    pl <- pl + geom_rect(data = dat_reg,
-                         aes(xmin = t_start, xmax = t_end,
-                             ymin = -Inf, ymax = +Inf),
-                         fill = rgb(0.2, 0.2, 0.2, 0.2))
+    if(log_y) {
+      miny <- min(data_pl$y)
+      maxy <- max(data_pl$y)
+    } else {
+      miny <- -Inf
+      maxy <- +Inf
+    }
+      pl <- pl + geom_rect(data = dat_reg,
+                           aes(xmin = t_start, xmax = t_end),
+                           ymin = miny, ymax = maxy,
+                           fill = rgb(0.2, 0.2, 0.2, 0.2))
+  }
+  if(!is.null(target)) {
+    if(target_as_ribbon) {
+      if(length(target) != 2) {
+        stop("To plot ribbon target should be vector of length 2.")
+      } else {
+        target_ribbon <- data.frame(cbind(t = c(0, max(data_pl$t)), ymin = target[1], ymax = target[2]))
+        pl <- pl + geom_ribbon(data = target_ribbon, aes(x = t, y = NULL, ymin = ymin, ymax = ymax, group = NULL),
+                              colour = 0, fill = rgb(0.3, 0.4, 0.6, 0.25))
+      }
+    } else {
+      pl <- pl + geom_hline(yintercept = target,
+                            colour = rgb(0.4, 0, 0), size = 0.5, linetype = 'dotted')
+    }
   }
   if(!is.null(show$spaghetti) && show$spaghetti) {
     col <- rgb(0.5, 0.5, 0.5, 0.5)
@@ -75,34 +97,23 @@ plot.PKPDsim_data <- function(
     colnames(ci_data) <- c("t", "lower", "upper")
     pl <- pl +
       geom_ribbon(data = ci_data, aes(x = t, y = NULL, ymin = lower, ymax = upper, group = NULL),
-                  colour = 0, fill = rgb(0.3, 0.5, 0.8, 0.3))
+                  colour = 0, fill = rgb(0.8, 0.5, 0.8, 0.3))
   }
   if(!is.null(show$median) && show$median) {
     median_data <- data.frame(data_pl %>% group_by(t) %>% summarise(quantile(y, 0.5)))
     colnames(median_data) <- c("t", "median")
     pl <- pl +
       geom_line(data = median_data, aes(x = t, y = median, group = NULL),
-                size = 1.5, colour=rgb(0.3, 0.3, 0.8, 0.6))
-  }
-  if(!is.null(target)) {
-    if(target_as_ribbon) {
-      if(length(target) != 2) {
-        stop("To plot ribbon target should be vector of length 2.")
-      } else {
-        target_ribbon <- data.frame(cbind(t = c(0, max(data_pl$t)), ymin = target[1], ymax = target[2]))
-        pl <- pl + geom_ribbon(data = target_ribbon, aes(x = t, y = NULL, ymin = ymin, ymax = ymax, group = NULL),
-                              colour = 0, fill = rgb(0.3, 0.5, 0.8, 0.35))
-      }
-    } else {
-      pl <- pl + geom_hline(yintercept = target,
-                            colour = rgb(0.4, 0, 0), size = 0.5, linetype = 'dotted')
-    }
+                size = 1.5, colour=rgb(0.15, 0.2, 0.6, 0.6))
   }
   if(!is.null(labels)) {
     pl <- pl + xlab(labels$x)
     pl <- pl + ylab(labels$y)
   }
   pl <- pl + theme_plain()
+  if(log_y) {
+    pl <- pl + scale_y_log10()
+  }
   if(return_svg) {
     filename <- paste0(tempfile(pattern="plot_"), ".svg")
     ggsave(filename = filename, plot = pl, width=9, height=6)
