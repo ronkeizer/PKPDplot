@@ -6,7 +6,7 @@ Date: 2016-01-11
 Author: Ron Keizer
 Maintainer: Ron Keizer <ronkeizer@gmail.com>
 Description: Plot PKPDsim data
-Depends: ggplot2, dplyr
+Depends: ggplot2, dplyr, grid
 Imports: PKPDsim
 License: MIT
 LazyData: TRUE

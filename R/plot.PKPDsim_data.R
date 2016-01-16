@@ -10,28 +10,60 @@
 plot.PKPDsim_data <- function(
   data,
   only_obs = TRUE,
-  show = list(
+  show_single = list(
+    obs = TRUE,
+    spaghetti = TRUE,
+    ci = FALSE,
+    median = FALSE,
+    regimen = TRUE
+  ),
+  show_population = list(
     obs = FALSE,
     spaghetti = TRUE,
     ci = FALSE,
-    median = TRUE
+    median = TRUE,
+    regimen = TRUE
   ),
+  show = NULL,
   target = NULL,
   target_as_ribbon = TRUE,
-  labels = list(x = "Time (hours)", y = "Concentration"),
+  labels = list(x = "Time (hours)", y = "Concentration (mg/L)"),
   ...) {
+    single <- TRUE
+    if(length(unique(data$id)) > 1) {
+      single <- FALSE
+    }
+    if(is.null(show)) {
+    if(single) {
+        show <- show_single
+      } else {
+        show <- show_population
+      }
+    }
+  regimen <- attr(data, "regimen")
   if(only_obs) {
     data_pl <- data[data$comp == "obs",]
   } else {
     data_pl <- data
   }
-  if(length(unique(data_pl$id)) > 1) {
-    pl <- ggplot(data_pl, aes(x = t, y = y, group = id))
-  } else {
-    pl <- ggplot(data_pl, aes(x = t, y = y))
+  pl <- ggplot()
+  if(!is.null(regimen) && show$regimen) {
+    dat_reg <- data.frame(cbind(t_start = regimen$dose_times,
+                                t_end = regimen$dose_times + regimen$t_inf,
+                                dose = regimen$dose_amts))
+    pl <- pl + geom_rect(data = dat_reg,
+                         aes(xmin = t_start, xmax = t_end,
+                             ymin = -Inf, ymax = +Inf),
+                         fill = rgb(0.2, 0.2, 0.2, 0.2))
   }
   if(!is.null(show$spaghetti) && show$spaghetti) {
-    pl <- pl + geom_line(colour = rgb(0.5, 0.5, 0.5, 0.5))
+    col <- rgb(0.5, 0.5, 0.5, 0.5)
+    if(single) {
+      col <- rgb(0.1, 0.1, 0.1)
+    }
+    pl <- pl + geom_line(data = data_pl,
+                         aes(x=t, y=y, group=id),
+                         colour = col, size = 1)
   }
   if(!is.null(show$ci) && show$ci) {
     ci_data <- data.frame(data_pl %>% group_by(t) %>% summarise(quantile(y, 0.05), quantile(y, 0.95)))
@@ -45,7 +77,7 @@ plot.PKPDsim_data <- function(
     colnames(median_data) <- c("t", "median")
     pl <- pl +
       geom_line(data = median_data, aes(x = t, y = median, group = NULL),
-                size = 1.5, colour=rgb(0.3, 0.3, 0.8, 0.9))
+                size = 1.5, colour=rgb(0.3, 0.3, 0.8, 0.6))
   }
   if(!is.null(target)) {
     if(target_as_ribbon) {
