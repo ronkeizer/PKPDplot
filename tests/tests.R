@@ -1,3 +1,5 @@
+Sys.setenv("R_TESTS" = "")
+library(testit)
 library(PKPDsim)
 library(PKPDplot)
 

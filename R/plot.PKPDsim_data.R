@@ -5,6 +5,9 @@
 #' @param labels list with `x` and `y` labels
 #' @param target vector of target values (dependent variable), will be shown as vertical lines
 #' @param target_as_ribbon show target (only when vector of 2) as ribbon (TRUE), or just as two lines (FALSE)
+#' @param show_single definition for plots of single patients
+#' @param show_population definition for plots of populations
+#' @param show definition of what to show in plot, overrides `show_single` and `show_population`. NULL by default
 #' @param ... rest
 #' @export
 plot.PKPDsim_data <- function(

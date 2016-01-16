@@ -4,15 +4,23 @@
 \alias{plot.PKPDsim_data}
 \title{Generic plotting function for PKPDsim objects}
 \usage{
-\method{plot}{PKPDsim_data}(data, only_obs = TRUE, show = list(obs = FALSE,
-  spaghetti = TRUE, ci = FALSE, median = TRUE), target = NULL,
+\method{plot}{PKPDsim_data}(data, only_obs = TRUE, show_single = list(obs =
+  TRUE, spaghetti = TRUE, ci = FALSE, median = FALSE, regimen = TRUE),
+  show_population = list(obs = FALSE, spaghetti = TRUE, ci = FALSE, median =
+  TRUE, regimen = TRUE), show = NULL, target = NULL,
   target_as_ribbon = TRUE, labels = list(x = "Time (hours)", y =
-  "Concentration"), ...)
+  "Concentration (mg/L)"), ...)
 }
 \arguments{
 \item{data}{PKPDsim-simulated data}
 
 \item{only_obs}{Only plot observation compartment}
+
+\item{show_single}{definition for plots of single patients}
+
+\item{show_population}{definition for plots of populations}
+
+\item{show}{definition of what to show in plot, overrides `show_single` and `show_population`. NULL by default}
 
 \item{target}{vector of target values (dependent variable), will be shown as vertical lines}
 
