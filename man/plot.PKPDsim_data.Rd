@@ -4,7 +4,7 @@
 \alias{plot.PKPDsim_data}
 \title{Generic plotting function for PKPDsim objects}
 \usage{
-\method{plot}{PKPDsim_data}(data, only_obs = TRUE, tooltips = FALSE,
+\method{plot}{PKPDsim_data}(data, only_obs = TRUE, plotly = FALSE,
   show_single = list(obs = TRUE, spaghetti = TRUE, ci = FALSE, median = FALSE,
   regimen = TRUE), show_population = list(obs = FALSE, spaghetti = TRUE, ci =
   FALSE, median = TRUE, regimen = TRUE), show = NULL, log_y = FALSE,
@@ -15,8 +15,6 @@
 \item{data}{PKPDsim-simulated data}
 
 \item{only_obs}{Only plot observation compartment}
-
-\item{tooltips}{}
 
 \item{show_single}{definition for plots of single patients}
 

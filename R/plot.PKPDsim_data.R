@@ -5,6 +5,7 @@
 #' @param labels list with `x` and `y` labels
 #' @param target vector of target values (dependent variable), will be shown as vertical lines
 #' @param target_as_ribbon show target (only when vector of 2) as ribbon (TRUE), or just as two lines (FALSE)
+#' @param regimen regimen specification from PKPDsim::new_regimen()
 #' @param show_single definition for plots of single patients
 #' @param show_population definition for plots of populations
 #' @param show definition of what to show in plot, overrides `show_single` and `show_population`. NULL by default
@@ -14,7 +15,7 @@
 plot.PKPDsim_data <- function(
   data,
   only_obs = TRUE,
-  plotly = FALSE,
+  regimen = NULL,
   show_single = list(
     obs = TRUE,
     spaghetti = TRUE,
@@ -22,6 +23,8 @@ plot.PKPDsim_data <- function(
     median = FALSE,
     regimen = TRUE
   ),
+  width = 6,
+  height = 4,
   show_population = list(
     obs = FALSE,
     spaghetti = TRUE,
@@ -68,7 +71,9 @@ plot.PKPDsim_data <- function(
         show <- show_population
       }
     }
-  regimen <- attr(data, "regimen")
+    if(!is.null(attr(data, "regimen")) && is.null(regimen)) {
+      regimen <- attr(data, "regimen")
+    }
   if(only_obs) {
     data_pl <- data[data$comp == "obs",]
   } else {
@@ -150,12 +155,9 @@ plot.PKPDsim_data <- function(
   if(log_y) {
     pl <- pl + scale_y_log10()
   }
-  if(plotly) {
-    pl <- ggplotly()
-  }
   if(return_svg) {
     filename <- paste0(tempfile(pattern="plot_"), ".svg")
-    ggsave(filename = filename, plot = pl, width=9, height=6)
+    ggsave(filename = filename, plot = pl, width=width, height=height)
     pl_contents <- readChar(filename, file.info(filename)$size)
     unlink(filename)
     return(pl_contents)
