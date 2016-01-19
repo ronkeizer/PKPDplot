@@ -14,6 +14,7 @@
 plot.PKPDsim_data <- function(
   data,
   only_obs = TRUE,
+  plotly = FALSE,
   show_single = list(
     obs = TRUE,
     spaghetti = TRUE,
@@ -35,6 +36,13 @@ plot.PKPDsim_data <- function(
   labels = list(x = "Time (hours)", y = "Concentration (mg/L)"),
   return_svg = FALSE,
   ...) {
+    if(!("id") %in% tolower(colnames(data))) {
+      data$id <- 1
+    }
+    if(!("comp") %in% tolower(colnames(data))) {
+      data$comp <- "obs"
+    }
+    data$type <- "Concentration"
     single <- TRUE
     if(length(unique(data$id)) > 1) {
       single <- FALSE
@@ -42,7 +50,21 @@ plot.PKPDsim_data <- function(
     if(is.null(show)) {
     if(single) {
         show <- show_single
-      } else {
+        if("ipred" %in% tolower(colnames(data))) {
+          tmp <- data
+          tmp$y <- data$ipred
+          tmp$type <- "Ind. prediction"
+          data <- data.frame(rbind(data, tmp))
+          data <- data[data$type != "Concentration",]
+        }
+        if("pred" %in% tolower(colnames(data))) {
+          tmp <- data
+          tmp$y <- data$pred
+          tmp$type <- "Pop. prediction"
+          data <- data.frame(rbind(data, tmp))
+          data <- data[data$type != "Concentration",]
+        }
+    } else {
         show <- show_population
       }
     }
@@ -88,10 +110,24 @@ plot.PKPDsim_data <- function(
     if(single) {
       col <- rgb(0.1, 0.1, 0.1)
     }
-    pl <- pl + geom_line(data = data_pl,
-                         aes(x=t, y=y, group=id),
-                         colour = col, size = 1)
+    if(single) {
+      if(length(unique(data_pl$type)) > 1) {
+        pl <- pl + geom_line(data = data_pl,
+                             aes(x=t, y=y, group = as.factor(type), colour = as.factor(type)),
+                             size = 1)
+      } else {
+        pl <- pl + geom_line(data = data_pl,
+                             aes(x=t, y=y, group = as.factor(type)),
+                             size = 1)
+      }
+    } else {
+      pl <- pl + geom_line(data = data_pl,
+                           aes(x=t, y=y, group = as.factor(id)),
+                           colour = rgb(0.5, 0.5, 0.5, 0.5),
+                           size = 1)
+    }
   }
+  pl <- pl + scale_colour_discrete(guide = guide_legend(title = NULL))
   if(!is.null(show$ci) && show$ci) {
     ci_data <- data.frame(data_pl %>% group_by(t) %>% summarise(quantile(y, 0.05), quantile(y, 0.95)))
     colnames(ci_data) <- c("t", "lower", "upper")
@@ -103,7 +139,7 @@ plot.PKPDsim_data <- function(
     median_data <- data.frame(data_pl %>% group_by(t) %>% summarise(quantile(y, 0.5)))
     colnames(median_data) <- c("t", "median")
     pl <- pl +
-      geom_line(data = median_data, aes(x = t, y = median, group = NULL),
+      geom_line(data = median_data, aes(x = t, y = median, group = NULL, colour = type),
                 size = 1.5, colour=rgb(0.15, 0.2, 0.6, 0.6))
   }
   if(!is.null(labels)) {
@@ -113,6 +149,9 @@ plot.PKPDsim_data <- function(
   pl <- pl + theme_plain()
   if(log_y) {
     pl <- pl + scale_y_log10()
+  }
+  if(plotly) {
+    pl <- ggplotly()
   }
   if(return_svg) {
     filename <- paste0(tempfile(pattern="plot_"), ".svg")

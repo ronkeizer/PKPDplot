@@ -4,17 +4,19 @@
 \alias{plot.PKPDsim_data}
 \title{Generic plotting function for PKPDsim objects}
 \usage{
-\method{plot}{PKPDsim_data}(data, only_obs = TRUE, show_single = list(obs =
-  TRUE, spaghetti = TRUE, ci = FALSE, median = FALSE, regimen = TRUE),
-  show_population = list(obs = FALSE, spaghetti = TRUE, ci = FALSE, median =
-  TRUE, regimen = TRUE), show = NULL, target = NULL,
-  target_as_ribbon = TRUE, labels = list(x = "Time (hours)", y =
-  "Concentration (mg/L)"), ...)
+\method{plot}{PKPDsim_data}(data, only_obs = TRUE, tooltips = FALSE,
+  show_single = list(obs = TRUE, spaghetti = TRUE, ci = FALSE, median = FALSE,
+  regimen = TRUE), show_population = list(obs = FALSE, spaghetti = TRUE, ci =
+  FALSE, median = TRUE, regimen = TRUE), show = NULL, log_y = FALSE,
+  target = NULL, target_as_ribbon = TRUE, labels = list(x =
+  "Time (hours)", y = "Concentration (mg/L)"), return_svg = FALSE, ...)
 }
 \arguments{
 \item{data}{PKPDsim-simulated data}
 
 \item{only_obs}{Only plot observation compartment}
+
+\item{tooltips}{}
 
 \item{show_single}{definition for plots of single patients}
 
@@ -27,6 +29,8 @@
 \item{target_as_ribbon}{show target (only when vector of 2) as ribbon (TRUE), or just as two lines (FALSE)}
 
 \item{labels}{list with `x` and `y` labels}
+
+\item{return_svg}{return the svg plot definition instead of ggplot2 object. FALSE by default}
 
 \item{...}{rest}
 }

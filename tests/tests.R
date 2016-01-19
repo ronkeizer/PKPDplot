@@ -31,3 +31,11 @@ plot(dat[dat$id == 1,], target = c(5, 7), log_y = TRUE)
 ## save as SVG or PNG, return text instead
 text <- plot(dat[dat$id == 1,], return_svg = TRUE)
 
+# with ipred
+dat2 <- dat[dat$id == 1,]
+dat2$ipred <- dat2$y * 1.1
+dat2$pred <- dat2$y * 0.8
+plot(dat2)
+
+# with tooltips (needs improvement)
+plot(dat2)

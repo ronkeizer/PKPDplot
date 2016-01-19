@@ -16,11 +16,12 @@ theme_plain1 <-  function () {
 
 theme_plain <-  function () {
   theme(
-    text = element_text(family="mono", size = 14),
+    text = element_text(family="mono", size = 13),
     plot.title = element_text(family="sans", size = 16, vjust = 1.5),
-    axis.title.x = element_text(family="sans",vjust = -1.25, size = 15),
-    axis.title.y = element_text(family="sans", vjust = +2, size = 15),
+    axis.title.x = element_text(family="sans",vjust = -1.25, size = 13),
+    axis.title.y = element_text(family="sans", vjust = +2, size = 13),
     legend.background = element_rect(fill = "white"),
+    legend.position = "bottom",
     #legend.position = c(0.14, 0.80),
     plot.margin = unit(c(.6, .6, 1.3, 1), "cm"),
     panel.grid.major = element_blank(),
