@@ -2,7 +2,9 @@
 #'
 #' @param data PKPDsim-simulated data
 #' @param only_obs Only plot observation compartment
+#' @param obs_data Also add observation (e.g. TDM) data
 #' @param labels list with `x` and `y` labels
+#' @param legend list of labels that override defaults, e.g. list("individual" = "ind.pred")
 #' @param target vector of target values (dependent variable), will be shown as vertical lines
 #' @param target_as_ribbon show target (only when vector of 2) as ribbon (TRUE), or just as two lines (FALSE)
 #' @param regimen regimen specification from PKPDsim::new_regimen()
@@ -15,7 +17,9 @@
 plot.PKPDsim_data <- function(
   data,
   only_obs = TRUE,
+  obs_data = NULL,
   regimen = NULL,
+  lines = NULL,
   show_single = list(
     obs = TRUE,
     spaghetti = TRUE,
@@ -23,8 +27,12 @@ plot.PKPDsim_data <- function(
     median = FALSE,
     regimen = TRUE
   ),
+  xlim = NULL,
+  ylim = NULL,
   width = 6,
   height = 4,
+  legend = NULL,
+  show_series = NULL,
   show_population = list(
     obs = FALSE,
     spaghetti = TRUE,
@@ -56,15 +64,23 @@ plot.PKPDsim_data <- function(
         if("ipred" %in% tolower(colnames(data))) {
           tmp <- data
           tmp$y <- data$ipred
-          tmp$type <- "Ind. prediction"
-          data <- data.frame(rbind(data, tmp))
+          tmp$type <- "individual"
+          if(!is.null(data$y) && length(data$y) > 0) {
+            data <- data.frame(rbind(data, tmp))
+          } else {
+            data <- tmp
+          }
           data <- data[data$type != "Concentration",]
         }
         if("pred" %in% tolower(colnames(data))) {
           tmp <- data
           tmp$y <- data$pred
-          tmp$type <- "Pop. prediction"
-          data <- data.frame(rbind(data, tmp))
+          tmp$type <- "population"
+          if(!is.null(data$y) && length(data$y) > 0) {
+            data <- data.frame(rbind(data, tmp))
+          } else {
+            data <- tmp
+          }
           data <- data[data$type != "Concentration",]
         }
     } else {
@@ -79,6 +95,27 @@ plot.PKPDsim_data <- function(
   } else {
     data_pl <- data
   }
+  if(!is.null(lines)) {
+    for (i in names(lines)) {
+      templ <- data_pl[rep(seq_len(nrow(data_pl)), each=length(lines[[i]]$t)),]
+      tmp <- lines[[i]]
+      for(j in names(tmp)) {
+        templ[[j]] <- tmp[[j]]
+      }
+      templ$type <- i
+      data_pl <- data.frame(rbind(data_pl, templ))
+    }
+  }
+  if(!is.null(legend)) {
+    for(key in names(legend)) {
+      data_pl[data_pl$type == as.character(key), ]$type <- as.character(legend[[key]])
+    }
+  }
+  if(!is.null(show_series)) {
+    data_pl <- data_pl[data_pl$type %in% show_series,]
+  }
+  ## /end data formatting
+  ## start plotting
   pl <- ggplot()
   if(!is.null(regimen) && show$regimen) {
     dat_reg <- data.frame(cbind(t_start = regimen$dose_times,
@@ -116,15 +153,9 @@ plot.PKPDsim_data <- function(
       col <- rgb(0.1, 0.1, 0.1)
     }
     if(single) {
-      if(length(unique(data_pl$type)) > 1) {
-        pl <- pl + geom_line(data = data_pl,
-                             aes(x=t, y=y, group = as.factor(type), colour = as.factor(type)),
-                             size = 1)
-      } else {
-        pl <- pl + geom_line(data = data_pl,
-                             aes(x=t, y=y, group = as.factor(type)),
-                             size = 1)
-      }
+      pl <- pl + geom_line(data = data_pl,
+                           aes(x=t, y=y, group = as.factor(type), colour = as.factor(type)),
+                           size = 1)
     } else {
       pl <- pl + geom_line(data = data_pl,
                            aes(x=t, y=y, group = as.factor(id)),
@@ -147,6 +178,9 @@ plot.PKPDsim_data <- function(
       geom_line(data = median_data, aes(x = t, y = median, group = NULL, colour = type),
                 size = 1.5, colour=rgb(0.15, 0.2, 0.6, 0.6))
   }
+  if(!is.null(obs_data)) {
+    pl <- pl + geom_point(data = obs_data, aes(x = t, y = y), size = 2)
+  }
   if(!is.null(labels)) {
     pl <- pl + xlab(labels$x)
     pl <- pl + ylab(labels$y)
@@ -155,6 +189,7 @@ plot.PKPDsim_data <- function(
   if(log_y) {
     pl <- pl + scale_y_log10()
   }
+  pl <- pl + coord_cartesian(xlim = xlim, ylim = ylim)
   if(return_svg) {
     filename <- paste0(tempfile(pattern="plot_"), ".svg")
     ggsave(filename = filename, plot = pl, width=width, height=height)

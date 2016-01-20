@@ -4,10 +4,12 @@
 \alias{plot.PKPDsim_data}
 \title{Generic plotting function for PKPDsim objects}
 \usage{
-\method{plot}{PKPDsim_data}(data, only_obs = TRUE, plotly = FALSE,
-  show_single = list(obs = TRUE, spaghetti = TRUE, ci = FALSE, median = FALSE,
-  regimen = TRUE), show_population = list(obs = FALSE, spaghetti = TRUE, ci =
-  FALSE, median = TRUE, regimen = TRUE), show = NULL, log_y = FALSE,
+\method{plot}{PKPDsim_data}(data, only_obs = TRUE, obs_data = NULL,
+  regimen = NULL, lines = NULL, show_single = list(obs = TRUE, spaghetti =
+  TRUE, ci = FALSE, median = FALSE, regimen = TRUE), xlim = NULL,
+  ylim = NULL, width = 6, height = 4, legend = NULL,
+  show_series = NULL, show_population = list(obs = FALSE, spaghetti = TRUE,
+  ci = FALSE, median = TRUE, regimen = TRUE), show = NULL, log_y = FALSE,
   target = NULL, target_as_ribbon = TRUE, labels = list(x =
   "Time (hours)", y = "Concentration (mg/L)"), return_svg = FALSE, ...)
 }
@@ -16,7 +18,13 @@
 
 \item{only_obs}{Only plot observation compartment}
 
+\item{obs_data}{Also add observation (e.g. TDM) data}
+
+\item{regimen}{regimen specification from PKPDsim::new_regimen()}
+
 \item{show_single}{definition for plots of single patients}
+
+\item{legend}{list of labels that override defaults, e.g. list("individual" = "ind.pred")}
 
 \item{show_population}{definition for plots of populations}
 

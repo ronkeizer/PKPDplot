@@ -38,4 +38,4 @@ dat2$pred <- dat2$y * 0.8
 plot(dat2)
 
 # with tooltips (needs improvement)
-plot(dat2)
+plot(dat2, plotly = )
