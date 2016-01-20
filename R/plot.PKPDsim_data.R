@@ -139,12 +139,12 @@ plot.PKPDsim_data <- function(
         stop("To plot ribbon target should be vector of length 2.")
       } else {
         target_ribbon <- data.frame(cbind(t = c(0, max(data_pl$t)), ymin = target[1], ymax = target[2]))
-        pl <- pl + geom_ribbon(data = target_ribbon, aes(x = t, y = NULL, ymin = ymin, ymax = ymax, group = NULL),
-                              colour = 0, fill = rgb(0.3, 0.4, 0.6, 0.25))
+        pl <- pl + geom_ribbon(data = target_ribbon, aes(x = t, y = NULL, ymin = ymin, ymax = ymax, group = NULL,colour = NULL),
+                              fill = rgb(0.3, 0.4, 0.6, 0.25))
       }
     } else {
       pl <- pl + geom_hline(yintercept = target,
-                            colour = rgb(0.4, 0, 0), size = 0.5, linetype = 'dotted')
+                            colour = rgb(0.4, 0, 0, 0.5), size = 0.5, linetype = 'dotted')
     }
   }
   if(!is.null(show$spaghetti) && show$spaghetti) {
@@ -168,8 +168,9 @@ plot.PKPDsim_data <- function(
     ci_data <- data.frame(data_pl %>% group_by(t) %>% summarise(quantile(y, 0.05), quantile(y, 0.95)))
     colnames(ci_data) <- c("t", "lower", "upper")
     pl <- pl +
-      geom_ribbon(data = ci_data, aes(x = t, y = NULL, ymin = lower, ymax = upper, group = NULL),
-                  colour = 0, fill = rgb(0.8, 0.5, 0.8, 0.3))
+      geom_ribbon(data = ci_data,
+                  aes(x = t, y = NULL, ymin = lower, ymax = upper, colour=NULL, group=NULL),
+                  fill = rgb(0.8, 0.5, 0.8, 0.3))
   }
   if(!is.null(show$median) && show$median) {
     median_data <- data.frame(data_pl %>% group_by(t) %>% summarise(quantile(y, 0.5)))
