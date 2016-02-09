@@ -11,7 +11,8 @@
   show_series = NULL, show_population = list(obs = FALSE, spaghetti = TRUE,
   ci = FALSE, median = TRUE, regimen = TRUE), show = NULL, log_y = FALSE,
   target = NULL, target_as_ribbon = TRUE, labels = list(x =
-  "Time (hours)", y = "Concentration (mg/L)"), return_svg = FALSE, ...)
+  "Time (hours)", y = "Concentration (mg/L)"), return_svg = FALSE,
+  palette = "Set1", ...)
 }
 \arguments{
 \item{data}{PKPDsim-simulated data}
@@ -37,6 +38,8 @@
 \item{labels}{list with `x` and `y` labels}
 
 \item{return_svg}{return the svg plot definition instead of ggplot2 object. FALSE by default}
+
+\item{palette}{color brewer palette, default is "Set1"}
 
 \item{...}{rest}
 }

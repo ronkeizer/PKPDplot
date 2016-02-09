@@ -12,6 +12,7 @@
 #' @param show_population definition for plots of populations
 #' @param show definition of what to show in plot, overrides `show_single` and `show_population`. NULL by default
 #' @param return_svg return the svg plot definition instead of ggplot2 object. FALSE by default
+#' @param palette color brewer palette, default is "Set1"
 #' @param ... rest
 #' @export
 plot.PKPDsim_data <- function(
@@ -46,6 +47,7 @@ plot.PKPDsim_data <- function(
   target_as_ribbon = TRUE,
   labels = list(x = "Time (hours)", y = "Concentration (mg/L)"),
   return_svg = FALSE,
+  palette = "Set1",
   ...) {
     if(!("id") %in% tolower(colnames(data))) {
       data$id <- 1
@@ -116,6 +118,7 @@ plot.PKPDsim_data <- function(
   }
   ## /end data formatting
   ## start plotting
+  dev.new()
   pl <- ggplot()
   if(!is.null(regimen) && show$regimen) {
     dat_reg <- data.frame(cbind(t_start = regimen$dose_times,
@@ -163,7 +166,7 @@ plot.PKPDsim_data <- function(
                            size = 1)
     }
   }
-  pl <- pl + scale_colour_discrete(guide = guide_legend(title = NULL))
+  pl <- pl + scale_colour_discrete("", guide = guide_legend(title = NULL))
   if(!is.null(show$ci) && show$ci) {
     ci_data <- data.frame(data_pl %>% group_by(t) %>% summarise(quantile(y, 0.05), quantile(y, 0.95)))
     colnames(ci_data) <- c("t", "lower", "upper")
@@ -191,6 +194,9 @@ plot.PKPDsim_data <- function(
     pl <- pl + scale_y_log10()
   }
   pl <- pl + coord_cartesian(xlim = xlim, ylim = ylim)
+  if(!is.null(palette)) {
+    pl <- pl + scale_colour_brewer("", palette = palette)
+  }
   if(return_svg) {
     filename <- paste0(tempfile(pattern="plot_"), ".svg")
     ggsave(filename = filename, plot = pl, width=width, height=height)
