@@ -11,6 +11,8 @@
 #' @param show_single definition for plots of single patients
 #' @param show_population definition for plots of populations
 #' @param show definition of what to show in plot, overrides `show_single` and `show_population`. NULL by default
+#' @param scale_colour_values values for colour scale
+#' @param scale_linetype_values values for linetype scale
 #' @param return_svg return the svg plot definition instead of ggplot2 object. FALSE by default
 #' @param ... rest
 #' @export
@@ -27,12 +29,6 @@ plot.PKPDsim_data <- function(
     median = FALSE,
     regimen = TRUE
   ),
-  xlim = NULL,
-  ylim = NULL,
-  width = 6,
-  height = 4,
-  legend = NULL,
-  show_series = NULL,
   show_population = list(
     obs = FALSE,
     spaghetti = TRUE,
@@ -40,10 +36,18 @@ plot.PKPDsim_data <- function(
     median = TRUE,
     regimen = TRUE
   ),
+  xlim = NULL,
+  ylim = NULL,
+  width = 6,
+  height = 4,
+  legend = NULL,
+  show_series = NULL,
   show = NULL,
   log_y = FALSE,
   target = NULL,
-  target_as_ribbon = TRUE,
+  target_as_ribbon = FALSE,
+  scale_colour_values = NULL,
+  scale_linetype_values = NULL,
   labels = list(x = "Time (hours)", y = "Concentration (mg/L)"),
   return_svg = FALSE,
   ...) {
@@ -139,14 +143,15 @@ plot.PKPDsim_data <- function(
         stop("To plot ribbon target should be vector of length 2.")
       } else {
         target_ribbon <- data.frame(cbind(t = c(0, max(data_pl$t)), ymin = target[1], ymax = target[2]))
-        pl <- pl + geom_ribbon(data = target_ribbon, aes(x = t, y = NULL, ymin = ymin, ymax = ymax, group = NULL,colour = NULL),
-                              fill = rgb(0.3, 0.4, 0.6, 0.25))
+        pl <- pl + geom_ribbon(data = target_ribbon, aes(x = t, y = NULL, ymin = ymin, ymax = ymax, group = NULL, colour = NULL),
+                              fill = rgb(0.3, 0.4, 0.6, 0.15), show_guide=FALSE)
       }
     } else {
       pl <- pl + geom_hline(yintercept = target,
-                            colour = rgb(0.4, 0, 0, 0.5), size = 0.5, linetype = 'dotted')
+                            colour = rgb(0.4, 0, 0, 0.5), size = 0.75, linetype = 'dotted')
     }
   }
+  pl <- pl + theme(legend.key = element_blank())
   if(!is.null(show$spaghetti) && show$spaghetti) {
     col <- rgb(0.5, 0.5, 0.5, 0.5)
     if(single) {
@@ -154,23 +159,31 @@ plot.PKPDsim_data <- function(
     }
     if(single) {
       pl <- pl + geom_line(data = data_pl,
-                           aes(x=t, y=y, group = as.factor(type), colour = as.factor(type)),
-                           size = 1)
+                           aes(x=t, y=y, group = as.factor(type), colour = as.factor(type), linetype=as.factor(type)),
+                           size = .75)
+      if(is.null(scale_colour_values)) {
+        pl <- pl + scale_colour_discrete(guide = guide_legend(title = NULL))
+      } else {
+        pl <- pl + scale_colour_manual(guide = guide_legend(title = NULL), values = scale_colour_values)
+      }
+      if(is.null(scale_linetype_values)) {
+        scale_linetype_values <- rep("solid", length(unique(data_pl$type)))
+      }
+      pl <- pl + scale_linetype_manual(guide = guide_legend(title = NULL), values=scale_linetype_values)
     } else {
       pl <- pl + geom_line(data = data_pl,
                            aes(x=t, y=y, group = as.factor(id)),
                            colour = rgb(0.5, 0.5, 0.5, 0.5),
-                           size = 1)
+                           size = .75)
     }
   }
-  pl <- pl + scale_colour_discrete(guide = guide_legend(title = NULL))
   if(!is.null(show$ci) && show$ci) {
     ci_data <- data.frame(data_pl %>% group_by(t) %>% summarise(quantile(y, 0.05), quantile(y, 0.95)))
     colnames(ci_data) <- c("t", "lower", "upper")
     pl <- pl +
       geom_ribbon(data = ci_data,
                   aes(x = t, y = NULL, ymin = lower, ymax = upper, colour=NULL, group=NULL),
-                  fill = rgb(0.8, 0.5, 0.8, 0.3))
+                  fill = rgb(0.8, 0.5, 0.8, 0.2))
   }
   if(!is.null(show$median) && show$median) {
     median_data <- data.frame(data_pl %>% group_by(t) %>% summarise(quantile(y, 0.5)))
