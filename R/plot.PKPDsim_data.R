@@ -14,7 +14,6 @@
 #' @param scale_colour_values values for colour scale
 #' @param scale_linetype_values values for linetype scale
 #' @param return_svg return the svg plot definition instead of ggplot2 object. FALSE by default
-#' @param palette color brewer palette, default is "Set1"
 #' @param ... rest
 #' @export
 plot.PKPDsim_data <- function(
@@ -51,7 +50,6 @@ plot.PKPDsim_data <- function(
   scale_linetype_values = NULL,
   labels = list(x = "Time (hours)", y = "Concentration (mg/L)"),
   return_svg = FALSE,
-  palette = "Set1",
   ...) {
     if(!("id") %in% tolower(colnames(data))) {
       data$id <- 1
@@ -122,7 +120,6 @@ plot.PKPDsim_data <- function(
   }
   ## /end data formatting
   ## start plotting
-  dev.new()
   pl <- ggplot()
   if(!is.null(regimen) && show$regimen) {
     dat_reg <- data.frame(cbind(t_start = regimen$dose_times,
@@ -207,9 +204,6 @@ plot.PKPDsim_data <- function(
     pl <- pl + scale_y_log10()
   }
   pl <- pl + coord_cartesian(xlim = xlim, ylim = ylim)
-  if(!is.null(palette)) {
-    pl <- pl + scale_colour_brewer("", palette = palette)
-  }
   if(return_svg) {
     filename <- paste0(tempfile(pattern="plot_"), ".svg")
     ggsave(filename = filename, plot = pl, width=width, height=height)
