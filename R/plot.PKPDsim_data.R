@@ -118,6 +118,10 @@ plot.PKPDsim_data <- function(
   if(!is.null(show_series)) {
     data_pl <- data_pl[data_pl$type %in% show_series,]
   }
+  tmp_y <- data_pl$y
+  if(!is.null(obs_data)) {
+    tmp_y <- c(tmp_y, obs_data$y)
+  }
   ## /end data formatting
   ## start plotting
   pl <- ggplot()
@@ -125,13 +129,13 @@ plot.PKPDsim_data <- function(
     dat_reg <- data.frame(cbind(t_start = regimen$dose_times,
                                 t_end = regimen$dose_times + regimen$t_inf,
                                 dose = regimen$dose_amts))
-    if(log_y) {
-      miny <- min(data_pl$y)
-      maxy <- max(data_pl$y)
-    } else {
-      miny <- -Inf
-      maxy <- +Inf
-    }
+      if(log_y) {
+        miny <- min(data_pl$y)
+        maxy <- max(data_pl$y)
+      } else {
+        miny <- -Inf
+        maxy <- +Inf
+      }
       pl <- pl + geom_rect(data = dat_reg,
                            aes(xmin = t_start, xmax = t_end),
                            ymin = miny, ymax = maxy,
@@ -203,6 +207,7 @@ plot.PKPDsim_data <- function(
   if(log_y) {
     pl <- pl + scale_y_log10()
   }
+  ylim <- c(0.1, max(tmp_y))
   pl <- pl + coord_cartesian(xlim = xlim, ylim = ylim)
   if(return_svg) {
     filename <- paste0(tempfile(pattern="plot_"), ".svg")
