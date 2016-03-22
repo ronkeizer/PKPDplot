@@ -6,7 +6,7 @@ Date: 2016-01-11
 Author: Ron Keizer
 Maintainer: Ron Keizer <ronkeizer@gmail.com>
 Description: Plot PKPDsim data
-Depends: ggplot2, dplyr, grid, reshape2
+Depends: ggplot2, dplyr, grid, reshape2, svglite
 Imports: PKPDsim
 Suggests: testit
 License: MIT
