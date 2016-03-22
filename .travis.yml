@@ -2,9 +2,15 @@ language: R
 sudo: required
 warnings_are_errors: false
 
+before_install:
+ - apt-get install libcairo-dev
+
 r_binary_packages:
  - testit
+
+r_packages:
  - svglite
+
 r_github_packages:
  - ronkeizer/PKPDsim
 
