@@ -4,6 +4,7 @@ warnings_are_errors: false
 
 r_binary_packages:
  - testit
+ - svglite
 r_github_packages:
  - ronkeizer/PKPDsim
-  
+
