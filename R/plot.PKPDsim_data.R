@@ -36,6 +36,7 @@ plot.PKPDsim_data <- function(
     median = TRUE,
     regimen = TRUE
   ),
+  theme = NULL,
   xlim = NULL,
   ylim = NULL,
   width = 6,
@@ -61,6 +62,9 @@ plot.PKPDsim_data <- function(
     single <- TRUE
     if(length(unique(data$id)) > 1) {
       single <- FALSE
+    }
+    if(is.null(theme)) {
+      theme <- new_plot_theme()
     }
     if(is.null(show)) {
     if(single) {
@@ -139,7 +143,7 @@ plot.PKPDsim_data <- function(
       pl <- pl + geom_rect(data = dat_reg,
                            aes(xmin = t_start, xmax = t_end),
                            ymin = miny, ymax = maxy,
-                           fill = rgb(0.2, 0.2, 0.2, 0.2))
+                           fill = theme$dose_fill)
   }
   if(!is.null(target)) {
     if(target_as_ribbon) {
@@ -148,11 +152,13 @@ plot.PKPDsim_data <- function(
       } else {
         target_ribbon <- data.frame(cbind(t = c(0, max(data_pl$t)), ymin = target[1], ymax = target[2]))
         pl <- pl + geom_ribbon(data = target_ribbon, aes(x = t, y = NULL, ymin = ymin, ymax = ymax, group = NULL, colour = NULL),
-                              fill = rgb(0.3, 0.4, 0.6, 0.15), show_guide=FALSE)
+                               fill = theme$target_fill, show_guide=FALSE)
       }
     } else {
       pl <- pl + geom_hline(yintercept = target,
-                            colour = rgb(0.4, 0, 0, 0.5), size = 0.75, linetype = 'dotted')
+                            colour = theme$target_color,
+                            size = 0.75,
+                            linetype = 'dotted')
     }
   }
   pl <- pl + theme(legend.key = element_blank())
@@ -177,7 +183,7 @@ plot.PKPDsim_data <- function(
     } else {
       pl <- pl + geom_line(data = data_pl,
                            aes(x=t, y=y, group = as.factor(id)),
-                           colour = rgb(0.5, 0.5, 0.5, 0.5),
+                           colour = theme$spaghetti_color,
                            size = .75)
     }
   }
@@ -187,17 +193,17 @@ plot.PKPDsim_data <- function(
     pl <- pl +
       geom_ribbon(data = ci_data,
                   aes(x = t, y = NULL, ymin = lower, ymax = upper, colour=NULL, group=NULL),
-                  fill = rgb(0.8, 0.5, 0.8, 0.2))
+                  fill = theme$ci_fill)
   }
   if(!is.null(show$median) && show$median) {
     median_data <- data.frame(data_pl %>% group_by(t) %>% summarise(quantile(y, 0.5)))
     colnames(median_data) <- c("t", "median")
     pl <- pl +
       geom_line(data = median_data, aes(x = t, y = median, group = NULL, colour = type),
-                size = 1.5, colour=rgb(0.15, 0.2, 0.6, 0.6))
+                size = 1.5, colour = theme$median_color)
   }
   if(!is.null(obs_data)) {
-    pl <- pl + geom_point(data = obs_data, aes(x = t, y = y), size = 2)
+    pl <- pl + geom_point(data = obs_data, aes(x = t, y = y), colour = theme$obs_color, size = theme$obs_size)
   }
   if(!is.null(labels)) {
     pl <- pl + xlab(labels$x)
