@@ -10,6 +10,7 @@
 #' @param regimen regimen specification from PKPDsim::new_regimen()
 #' @param show_single definition for plots of single patients
 #' @param show_population definition for plots of populations
+#' @param ci confidence interval, specified as vector of two values between 0 and 1, default is `c(0.05, 0.95)`.
 #' @param show definition of what to show in plot, overrides `show_single` and `show_population`. NULL by default
 #' @param scale_colour_values values for colour scale
 #' @param scale_linetype_values values for linetype scale
@@ -36,6 +37,7 @@ plot.PKPDsim_data <- function(
     median = TRUE,
     regimen = TRUE
   ),
+  ci = c(0.05, 0.95),
   theme = NULL,
   xlim = NULL,
   ylim = NULL,
@@ -57,6 +59,9 @@ plot.PKPDsim_data <- function(
     }
     if(!("comp") %in% tolower(colnames(data))) {
       data$comp <- "obs"
+    }
+    if(is.null(ci) || length(ci) != 2 || any(ci < 0) || any(ci > 1)) {
+      stop("`ci` argument has to be of vector of length two and specify the CI (between 0 and 1).")
     }
     data$type <- "Concentration"
     single <- TRUE
@@ -188,7 +193,7 @@ plot.PKPDsim_data <- function(
     }
   }
   if(!is.null(show$ci) && show$ci) {
-    ci_data <- data.frame(data_pl %>% group_by(t) %>% summarise(quantile(y, 0.05), quantile(y, 0.95)))
+    ci_data <- data.frame(data_pl %>% group_by(t) %>% summarise(quantile(y, ci[1]), quantile(y, ci[2])))
     colnames(ci_data) <- c("t", "lower", "upper")
     pl <- pl +
       geom_ribbon(data = ci_data,
