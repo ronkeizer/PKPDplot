@@ -135,6 +135,13 @@ plot.PKPDsim_data <- function(
   ## start plotting
   pl <- ggplot()
   if(!is.null(regimen) && show$regimen) {
+    t_end <-  regimen$dose_times
+    if(any(regimen$type == "infusion")) {
+      t_end[!is.na(regimen$t_inf)] <- t_end[!is.na(regimen$t_inf)] + regimen$t_inf[!is.na(regimen$t_inf)]
+      t_end[is.na(regimen$t_inf)] <- t_end[is.na(regimen$t_inf)] + 1
+    } else {
+      t_end <- t_end + 1
+    }
     dat_reg <- data.frame(cbind(t_start = regimen$dose_times,
                                 t_end = regimen$dose_times + regimen$t_inf,
                                 dose = regimen$dose_amts))

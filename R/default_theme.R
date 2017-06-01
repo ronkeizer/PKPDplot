@@ -21,7 +21,7 @@ theme_plain <-  function () {
     axis.title.y = element_text(margin=margin(0,15,0,0)),
     legend.background = element_rect(fill = "white"),
     legend.position = "top",
-    legend.margin=unit(0.1, "cm"),
+    legend.spacing=unit(0.1, "cm"),
     legend.key = element_rect(fill = "#ffffff", colour=NA),
     legend.key.width = unit(.5, "cm"),
     plot.margin = unit(c(.1, .6, .3, 1), "cm"),
