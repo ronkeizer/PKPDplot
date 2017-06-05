@@ -26,7 +26,7 @@
 #' @param ... rest
 #' @export
 
-plot.PKPDsim_x <- function(
+plot.PKPDsim_data <- function(
   x,
   only_obs = TRUE,
   obs_x = NULL,
