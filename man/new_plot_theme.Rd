@@ -15,4 +15,3 @@ A list with vpc theme specifiers
 \description{
 Create a customized PKPDsim plot theme
 }
-

@@ -7,14 +7,14 @@
 new_plot_theme <- function (update = NULL) {
   tmp <- structure(list(
 
-    spaghetti_color = rgb(0.5, 0.5, 0.5, 0.5),
-    dose_fill       = rgb(0.2, 0.2, 0.2, 0.2),
-    target_fill     = rgb(0.3, 0.4, 0.6, 0.15),
-    target_color    = rgb(0.4, 0, 0, 0.5),
-    ci_fill         = rgb(0.8, 0.5, 0.8, 0.2),
-    median_color    = rgb(0.15, 0.2, 0.6, 0.6),
+    spaghetti_color = grDevices::rgb(0.5, 0.5, 0.5, 0.5),
+    dose_fill       = grDevices::rgb(0.2, 0.2, 0.2, 0.2),
+    target_fill     = grDevices::rgb(0.3, 0.4, 0.6, 0.15),
+    target_color    = grDevices::rgb(0.4, 0, 0, 0.5),
+    ci_fill         = grDevices::rgb(0.8, 0.5, 0.8, 0.2),
+    median_color    = grDevices::rgb(0.15, 0.2, 0.6, 0.6),
     obs_size        = 2,
-    obs_color       = rgb(0, 0, 0, 0.5)
+    obs_color       = grDevices::rgb(0, 0, 0, 0.5)
 
   ), class = "plot_theme")
   n <- names(tmp)
