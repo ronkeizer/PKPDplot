@@ -11,6 +11,7 @@ Imports:
     ggplot2,
     dplyr,
     grid,
+    png,
     reshape2,
     svglite,
     grDevices

@@ -3,3 +3,4 @@
 S3method(plot,PKPDsim_data)
 export(as.num)
 export(new_plot_theme)
+export(png_overlay)

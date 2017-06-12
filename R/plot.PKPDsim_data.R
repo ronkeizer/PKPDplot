@@ -22,6 +22,7 @@
 #' @param width width of plot if saved
 #' @param height height of plot if saved
 #' @param show_series show only specified types / series
+#' @param overlay add a overlay, e.g. from a PNG file created with `png_overlay()`
 #' @param log_y log y axis?
 #' @param ... rest
 #' @export
@@ -60,6 +61,7 @@ plot.PKPDsim_data <- function(
   target_as_ribbon = FALSE,
   scale_colour_values = NULL,
   scale_linetype_values = NULL,
+  overlay = NULL,
   labels = list(x = "Time (hours)", y = "Concentration (mg/L)"),
   return_svg = FALSE,
   ...) {
@@ -143,6 +145,9 @@ plot.PKPDsim_data <- function(
   ## /end x formatting
   ## start plotting
   pl <- ggplot2::ggplot()
+  if(!is.null(overlay)) {
+    pl <- pl + overlay
+  }
   if(!is.null(regimen) && show$regimen) {
     t_end <-  regimen$dose_times
     if(any(regimen$type == "infusion")) {
@@ -245,7 +250,9 @@ plot.PKPDsim_data <- function(
   if(log_y) {
     pl <- pl + ggplot2::scale_y_log10()
   }
-  ylim <- c(0.1, max(tmp_y))
+  if(is.null(ylim)) {
+    ylim <- c(0.1, max(tmp_y))
+  }
   pl <- pl +
     ggplot2::coord_cartesian(xlim = xlim, ylim = ylim)
   if(return_svg) {
