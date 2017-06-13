@@ -17,13 +17,13 @@ png_overlay <- function(
   if(is.null(png)) {
     stop("No PNG file specified!")
   }
-  img <- readPNG(png)
+  img <- png::readPNG(png)
   y_len <- length(img[,1,1])
   x_len <- length(img[1,,1])
-  g <- rasterGrob(img[
+  g <- grid::rasterGrob(img[
     round(y_len * (1-y_sel[2])):round(y_len*(1-y_sel[1])),
     round(x_len * x_sel[1]):round(x_len*x_sel[2]),
     1:3],
-    interpolate=TRUE, width = unit(1,"npc"), height = unit(1,"npc"))
-  annotation_custom(g, x_range[1], x_range[2], y_range[1], y_range[2])
+    interpolate=TRUE, width = grid::unit(1,"npc"), height = grid::unit(1,"npc"))
+  ggplot2::annotation_custom(g, x_range[1], x_range[2], y_range[1], y_range[2])
 }
