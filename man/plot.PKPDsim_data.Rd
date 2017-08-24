@@ -4,16 +4,16 @@
 \alias{plot.PKPDsim_data}
 \title{Generic plotting function for PKPDsim objects}
 \usage{
-\method{plot}{PKPDsim_data}(x, only_obs = TRUE, obs_x = NULL,
-  regimen = NULL, lines = NULL, show_single = list(obs = TRUE, spaghetti =
-  TRUE, ci = FALSE, median = FALSE, regimen = TRUE),
-  show_population = list(obs = FALSE, spaghetti = TRUE, ci = FALSE, median =
-  TRUE, regimen = TRUE), ci = c(0.05, 0.95), theme = NULL, xlim = NULL,
-  ylim = NULL, width = 6, height = 4, legend = NULL,
-  show_series = NULL, show = NULL, log_y = FALSE, target = NULL,
-  target_as_ribbon = FALSE, scale_colour_values = NULL,
-  scale_linetype_values = NULL, overlay = NULL, labels = list(x =
-  "Time (hours)", y = "Concentration (mg/L)"), return_svg = FALSE, ...)
+plot.PKPDsim_data(x, only_obs = TRUE, obs_x = NULL, regimen = NULL,
+  lines = NULL, show_single = list(obs = TRUE, spaghetti = TRUE, ci = FALSE,
+  median = FALSE, regimen = TRUE), show_population = list(obs = FALSE,
+  spaghetti = TRUE, ci = FALSE, median = TRUE, regimen = TRUE), ci = c(0.05,
+  0.95), theme = NULL, xlim = NULL, ylim = NULL, width = 6,
+  height = 4, legend = NULL, show_series = NULL, show = NULL,
+  log_y = FALSE, target = NULL, target_as_ribbon = FALSE,
+  scale_colour_values = NULL, scale_linetype_values = NULL,
+  overlay = NULL, labels = list(x = "Time (hours)", y =
+  "Concentration (mg/L)"), return_svg = FALSE, ...)
 }
 \arguments{
 \item{x}{PKPDsim-simulated x}
